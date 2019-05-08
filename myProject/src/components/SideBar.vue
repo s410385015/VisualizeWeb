@@ -55,12 +55,12 @@ export default {
                         child: [
                             {
                                 href: '/graph',
-                                title: 'Sub Link1',
+                                title: 'null',
                                 icon: 'fa fa-file-alt'
                             },
                             {
                                 href: '/timeserie',
-                                title: 'Sub Link2',
+                                title: 'Time Series',
                                 icon: 'fa fa-file-alt'
                             }
                         ]

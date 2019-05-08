@@ -1,26 +1,34 @@
 <template>
-  <div class="example">
-    <apexchart width="90%" height="350" type="line" :options="chartOptions" :series="series"></apexchart>
-  
-    <select @change="Onchange($event)" v-model="selected">
-        <option v-for="t in types" v-bind:value="t.id">{{t.name}}</option>
-    </select>
-    <input type="checkbox" id="r2_c" value=2 v-model="checkValue" v-on:change="Update()">
-    <label for="r2_c">Dim2</label>
-    <input type="checkbox" id="r4_c" value=4 v-model="checkValue" v-on:change="Update()">
-    <label for="r4_c">Dim4</label>
-    <input type="checkbox" id="r6_c" value=6 v-model="checkValue" v-on:change="Update()">
-    <label for="r6_c">Dim6</label>
-    <input type="checkbox" id="r8_c" value=8 v-model="checkValue" v-on:change="Update()">
-    <label for="r8_c">Dim8</label>
-    <button type="button" @click="test">按鈕要大</button>
+  <div id="graph">
+    <Heatmap/>
+
+    <div class="timeGraph">
+      <apexchart width="94%" height="350" type="line" :options="chartOptions" :series="series"></apexchart>
+      <select @change="Onchange($event)" v-model="selected">
+          <option v-for="t in types" v-bind:value="t.id">{{t.name}}</option>
+      </select>
+      <input type="checkbox" id="r2_c" value=2 v-model="checkValue" v-on:change="Update()">
+      <label for="r2_c">Dim2</label>
+      <input type="checkbox" id="r4_c" value=4 v-model="checkValue" v-on:change="Update()">
+      <label for="r4_c">Dim4</label>
+      <input type="checkbox" id="r6_c" value=6 v-model="checkValue" v-on:change="Update()">
+      <label for="r6_c">Dim6</label>
+      <input type="checkbox" id="r8_c" value=8 v-model="checkValue" v-on:change="Update()">
+      <label for="r8_c">Dim8</label>
+    </div>
+    <!--<button type="button" @click="test">按鈕要大</button>-->
   </div>
 </template>
 
 <script>
 import { isObjectExpression } from '@babel/types';
+import Heatmap from './Heatmap'
+
 export default {
-  name: 'LineExample',
+  name: 'TimeSeries',
+  components: {
+      Heatmap
+  },
   data: function() {
     return {
       chartOptions: {
@@ -31,7 +39,7 @@ export default {
           }
         },
         title: {
-            text: 'Page Statistics',
+            text: '',
             align: 'left'
         },
         stroke: {
@@ -47,7 +55,8 @@ export default {
       d8:[],
       types:[],
       checkValue:["2","4","6","8"],
-      selectIdx:-1
+      selectIdx:-1,
+      selected:"?"
     }
   },
   mounted () {
@@ -155,3 +164,14 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600');
+
+#graph {
+  
+}
+.timeGraph {
+   padding-left: 3%;
+}
+</style>

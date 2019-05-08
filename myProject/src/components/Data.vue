@@ -2,7 +2,7 @@
 <template>
   <div>
     <!-- <input type='file' id='upload' @change="uploadFile"> -->
-    <button type="button" @click="prompt">按鈕要大</button>
+    <!--<button type="button" @click="prompt">按鈕要大</button>-->
     <div>
           Select Data:
           <select @change="dataSelect">
