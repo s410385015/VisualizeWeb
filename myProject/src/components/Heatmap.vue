@@ -36,7 +36,7 @@ export default {
     mounted(){
         let self=this;
      
-        this.$axios.get('http://127.0.0.1:5000/reconstructDiff').then((response) => {
+        this.$axios.get('http://140.113.210.24:5000/reconstructDiff').then((response) => {
             self.dataDiff.push(response.data['r2']);
             self.dataDiff.push(response.data['r4']);
             self.dataDiff.push(response.data['r6']);

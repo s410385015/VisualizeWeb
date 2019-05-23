@@ -1,9 +1,10 @@
 <template>
   <div id="graph">
     <Heatmap/>
-
+    
+    
     <div class="timeGraph">
-      <apexchart width="94%" height="350" type="line" :options="chartOptions" :series="series"></apexchart>
+      <apexchart width="94%" height="250" type="line" :options="chartOptions" :series="series"></apexchart>
       <select @change="Onchange($event)" v-model="selected">
           <option v-for="t in types" v-bind:value="t.id">{{t.name}}</option>
       </select>
@@ -16,6 +17,9 @@
       <input type="checkbox" id="r8_c" value=8 v-model="checkValue" v-on:change="Update()">
       <label for="r8_c">Dim8</label>
     </div>
+    <br>
+    <div ref="container">
+    </div>
     <!--<button type="button" @click="test">按鈕要大</button>-->
   </div>
 </template>
@@ -23,11 +27,17 @@
 <script>
 import { isObjectExpression } from '@babel/types';
 import Heatmap from './Heatmap'
+import StreamGraph from './StreamGraph'
+import StackedBar from './StackedBar'
+import Vue from 'vue'
+
 
 export default {
   name: 'TimeSeries',
   components: {
-      Heatmap
+      Heatmap,
+      StreamGraph,
+      StackedBar
   },
   data: function() {
     return {
@@ -56,12 +66,17 @@ export default {
       types:[],
       checkValue:["2","4","6","8"],
       selectIdx:-1,
-      selected:"?"
+      selected:"?",
+      dataDiff:[],
+      len:0,
+      dim:0,
+      tags:[],
+      stackData:[],
     }
   },
   mounted () {
         let _self=this;
-        this.$axios.get('http://127.0.0.1:5000/reconstructRaw').then((response) => {
+        this.$axios.get('http://140.113.210.24:5000/reconstructRaw').then((response) => {
             _self.r=_self.RoundFloat(2,response.data['r']);
             _self.d2=_self.RoundFloat(2,response.data['d2']);
             _self.d4=_self.RoundFloat(2,response.data['d4']);
@@ -77,7 +92,7 @@ export default {
             }
             _self.chartOptions.categories=xaxis;
         });
-        this.$axios.get('http://127.0.0.1:5000/getraw20').then((response) => {
+        this.$axios.get('http://140.113.210.24:5000/getraw20').then((response) => {
             let _r = Object.keys((JSON.parse("["+response.data+"]"))[0]);
             let i=0;
             for(i;i<_r.length;i++)
@@ -88,11 +103,63 @@ export default {
                    name:_r[i]
                  })
             }
-        })
-    
+
+          
+        });
+
+        var tmp=Vue.extend(StackedBar)
+        var instance=new tmp()
+        instance.$mount()
+        _self.$refs.container.appendChild(instance.$el)
+        
+        instance.init()
+        this.$axios.get('http://140.113.210.24:5000/reconstructDiffSub').then((response) => {
+            _self.dataDiff.push(response.data['r2']);
+            _self.dataDiff.push(response.data['r4']);
+            _self.dataDiff.push(response.data['r6']);
+            _self.dataDiff.push(response.data['r8']);
+            _self.len=response.data['len'];
+            _self.dim=response.data['dim'];
+            _self.tags=response.data['tags']; 
+            let i=0;
+            for(i;i<_self.dim;i++)
+            {
+                let _r2=_self.dataDiff[0].map(value=>value[i])
+                let _r4=_self.dataDiff[1].map(value=>value[i])
+                let _r6=_self.dataDiff[2].map(value=>value[i])
+                let _r8=_self.dataDiff[3].map(value=>value[i])
+
+                let tmpArray=[]
+
+                let j=0;
+                for(j;j<_self.len;j++)
+                {
+                    tmpArray.push({r2:_r2[j],r4:_r4[j],r6:_r6[j],r8:_r8[j]})
+                }
+                
+                _self.stackData.push(tmpArray)
+            }
+          
+            var keys=Object.keys(_self.stackData[0][0]);
+            
+            //_self.dim=1 
+            for(i=0;i<_self.dim;i++){
+                var tmp=Vue.extend(StreamGraph)
+                var instance=new tmp()
+                instance.$mount()
+                _self.$refs.container.appendChild(instance.$el)
+               
+                instance.init(keys,_self.stackData[i],_self.len,_self.tags[i])
+            }
+        });
+        
+        
         
   },
   methods: {
+
+
+
       test(){
           console.log(this.checkValue.includes('2'))
       },

@@ -7,9 +7,11 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import VueApexCharts from 'vue-apexcharts'
-import BootstrapVue from 'bootstrap-vue'
+//import BootstrapVue from 'bootstrap-vue'
+import HighchartsVue from 'highcharts-vue'
 
-Vue.use(BootstrapVue)
+Vue.use(HighchartsVue)
+//Vue.use(BootstrapVue)
 Vue.use(VueApexCharts)
 Vue.component('apexchart', VueApexCharts)
 
