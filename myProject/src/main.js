@@ -9,7 +9,9 @@ import axios from 'axios'
 import VueApexCharts from 'vue-apexcharts'
 //import BootstrapVue from 'bootstrap-vue'
 import HighchartsVue from 'highcharts-vue'
+import VueSlideBar from 'vue-slide-bar'
 
+Vue.component('VueSlideBar', VueSlideBar)
 Vue.use(HighchartsVue)
 //Vue.use(BootstrapVue)
 Vue.use(VueApexCharts)

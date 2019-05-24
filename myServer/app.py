@@ -57,28 +57,66 @@ def GetReconstructDiff():
     tmp=np.abs(dim2/raw-1)
     for i in range(0,raw.shape[0],len):
         r2.append(np.array(tmp[i:i+len,:].sum(axis=0)/len))
-    r2=np.array(r2)
+    r2=np.round(np.array(r2),decimals=2)
 
     r4=[]
     tmp=np.abs(dim4/raw-1)
     for i in range(0,raw.shape[0],len):
         r4.append(np.array(tmp[i:i+len,:].sum(axis=0)/len))
-    r4=np.array(r4)
+    r4=np.round(np.array(r4),decimals=2)
     
     r6=[]
     tmp=np.abs(dim6/raw-1)
     for i in range(0,raw.shape[0],len):
         r6.append(np.array(tmp[i:i+len,:].sum(axis=0)/len))
-    r6=np.array(r6)
+    r6=np.round(np.array(r6),decimals=2)
     
     r8=[]
     tmp=np.abs(dim8/raw-1)
     for i in range(0,raw.shape[0],len):
         r8.append(np.array(tmp[i:i+len,:].sum(axis=0)/len))
-    r8=np.array(r8)
+    r8=np.round(np.array(r8),decimals=2)
 
     List={'len':raw.shape[0],'dim':raw.shape[1],'r2':r2.tolist(),'r4':r4.tolist(),'r6':r6.tolist(),'r8':r8.tolist(),'tags':tags.tolist()}
     return jsonify(List)
+
+@app.route('/reconstructDiffDiv', methods=['GET'])
+def GetReconstructDiffDiv():
+    raw=np.load('raw.npy')
+    dim2=np.load('dim2_reconnstruct.npy')
+    dim4=np.load('dim4_reconnstruct.npy')
+    dim6=np.load('dim6_reconnstruct.npy')
+    dim8=np.load('dim8_reconnstruct.npy')
+    tags=np.load('tags.npy')
+    len=(int)(raw.shape[0]/100)
+    
+    r2=[]
+    tmp=dim2/raw-1
+    for i in range(0,raw.shape[0],len):
+        r2.append(np.array(tmp[i:i+len,:].sum(axis=0)/len))
+    r2=np.round(np.array(r2),decimals=2)
+
+    r4=[]
+    tmp=dim4/raw-1
+    for i in range(0,raw.shape[0],len):
+        r4.append(np.array(tmp[i:i+len,:].sum(axis=0)/len))
+    r4=np.round(np.array(r4),decimals=2)
+    
+    r6=[]
+    tmp=dim6/raw-1
+    for i in range(0,raw.shape[0],len):
+        r6.append(np.array(tmp[i:i+len,:].sum(axis=0)/len))
+    r6=np.round(np.array(r6),decimals=2)
+    
+    r8=[]
+    tmp=dim8/raw-1
+    for i in range(0,raw.shape[0],len):
+        r8.append(np.array(tmp[i:i+len,:].sum(axis=0)/len))
+    r8=np.round(np.array(r8),decimals=2)
+
+    List={'len':r2.shape[0],'dim':raw.shape[1],'r2':r2.tolist(),'r4':r4.tolist(),'r6':r6.tolist(),'r8':r8.tolist(),'tags':tags.tolist()}
+    return jsonify(List)
+
 
 
 @app.route('/reconstructDiffSub', methods=['GET'])

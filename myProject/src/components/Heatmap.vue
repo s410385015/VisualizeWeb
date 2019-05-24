@@ -46,7 +46,7 @@ export default {
             self.tags=response.data['tags'];
 
            
-            self.series=self.generateData(2,self);
+            self.series=self.generateData(0,self);
             
         });
     },

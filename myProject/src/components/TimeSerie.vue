@@ -4,22 +4,39 @@
     
     
     <div class="timeGraph">
-      <apexchart width="94%" height="250" type="line" :options="chartOptions" :series="series"></apexchart>
-      <select @change="Onchange($event)" v-model="selected">
-          <option v-for="t in types" v-bind:value="t.id">{{t.name}}</option>
-      </select>
-      <input type="checkbox" id="r2_c" value=2 v-model="checkValue" v-on:change="Update()">
-      <label for="r2_c">Dim2</label>
-      <input type="checkbox" id="r4_c" value=4 v-model="checkValue" v-on:change="Update()">
-      <label for="r4_c">Dim4</label>
-      <input type="checkbox" id="r6_c" value=6 v-model="checkValue" v-on:change="Update()">
-      <label for="r6_c">Dim6</label>
-      <input type="checkbox" id="r8_c" value=8 v-model="checkValue" v-on:change="Update()">
-      <label for="r8_c">Dim8</label>
+        <apexchart width="94%" height="250" type="line" :options="chartOptions" :series="series"></apexchart>
+        <select @change="Onchange($event)" v-model="selected">
+            <option v-for="t in types" v-bind:value="t.id">{{t.name}}</option>
+        </select>
+        <input type="checkbox" id="r2_c" value=2 v-model="checkValue" v-on:change="Update()">
+        <label for="r2_c">Dim2</label>
+        <input type="checkbox" id="r4_c" value=4 v-model="checkValue" v-on:change="Update()">
+        <label for="r4_c">Dim4</label>
+        <input type="checkbox" id="r6_c" value=6 v-model="checkValue" v-on:change="Update()">
+        <label for="r6_c">Dim6</label>
+        <input type="checkbox" id="r8_c" value=8 v-model="checkValue" v-on:change="Update()">
+        <label for="r8_c">Dim8</label>
     </div>
     <br>
-    <div ref="container">
+    <!--<button v-on:click="ModeSwitch">{{BtnMsg}}</button>-->
+    <div v-if="mode">
+        <VueSlideBar
+          v-model="value2"
+          :min="1"
+          :max="10"
+          :processStyle="slider.processStyle"
+          :lineHeight="slider.lineHeight"
+          :tooltipStyles="{ backgroundColor: 'red', borderColor: 'red' }">
+        </VueSlideBar>
+        <h2>Value: {{value2}}</h2>
+           
     </div>
+    <div ref="container"></div> 
+    <!--<div ref="containerg"></div>-->
+    
+    <!--<div ref="containerg"></div>-->
+   
+  
     <!--<button type="button" @click="test">按鈕要大</button>-->
   </div>
 </template>
@@ -30,6 +47,7 @@ import Heatmap from './Heatmap'
 import StreamGraph from './StreamGraph'
 import StackedBar from './StackedBar'
 import Vue from 'vue'
+import VueSlideBar from 'vue-slide-bar'
 
 
 export default {
@@ -37,10 +55,20 @@ export default {
   components: {
       Heatmap,
       StreamGraph,
-      StackedBar
+      StackedBar,
+      VueSlideBar
   },
   data: function() {
     return {
+      mode:false,
+      BtnMsg: "StackedBar",
+      value2: 8,
+      slider: {
+        lineHeight: 10,
+        processStyle: {
+          backgroundColor: 'red'
+        }
+      },
       chartOptions: {
         xaxis: {
           categories:[],
@@ -72,6 +100,8 @@ export default {
       dim:0,
       tags:[],
       stackData:[],
+      keys:[],
+      instances:[],
     }
   },
   mounted () {
@@ -107,13 +137,10 @@ export default {
           
         });
 
-        var tmp=Vue.extend(StackedBar)
-        var instance=new tmp()
-        instance.$mount()
-        _self.$refs.container.appendChild(instance.$el)
+    
         
-        instance.init()
-        this.$axios.get('http://140.113.210.24:5000/reconstructDiffSub').then((response) => {
+        
+        this.$axios.get('http://140.113.210.24:5000/reconstructDiffDiv').then((response) => {
             _self.dataDiff.push(response.data['r2']);
             _self.dataDiff.push(response.data['r4']);
             _self.dataDiff.push(response.data['r6']);
@@ -139,18 +166,36 @@ export default {
                 
                 _self.stackData.push(tmpArray)
             }
-          
-            var keys=Object.keys(_self.stackData[0][0]);
+
+
+            console.log(_self.stackData)
+            _self.keys=Object.keys(_self.stackData[0][0]);
             
+            //this.mode=true;
             //_self.dim=1 
+            
+            
+            for(i=0;i<_self.dim;i++){
+                var tmp=Vue.extend(StackedBar)
+                var instance=new tmp()
+                instance.$mount()
+                _self.$refs.container.appendChild(instance.$el)
+               
+                instance.init(_self.keys,_self.stackData[i],_self.len,_self.tags[i])
+                _self.instances.push(instance)
+            }
+            
+            
             for(i=0;i<_self.dim;i++){
                 var tmp=Vue.extend(StreamGraph)
                 var instance=new tmp()
                 instance.$mount()
                 _self.$refs.container.appendChild(instance.$el)
                
-                instance.init(keys,_self.stackData[i],_self.len,_self.tags[i])
+                instance.init(_self.keys,_self.stackData[i],_self.len,_self.tags[i])
             }
+            
+
         });
         
         
@@ -158,8 +203,22 @@ export default {
   },
   methods: {
 
-
-
+    
+      ModeSwitch(){
+          if(this.BtnMsg=="StreamGraph")
+          {
+              this.BtnMsg="StackedBar";
+              this.mode=false;
+              
+              
+          }
+          else
+          {
+              this.BtnMsg="StreamGraph";
+              this.mode=true;
+             
+          }
+      },
       test(){
           console.log(this.checkValue.includes('2'))
       },

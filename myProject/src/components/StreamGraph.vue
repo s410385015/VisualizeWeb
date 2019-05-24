@@ -12,15 +12,7 @@ export default {
     name: 'StreamGraph',
     data: function() {
         return {
-            message:"hi",
-            data: [99, 71, 78, 25, 36, 92],
-            line: '',
-            dataDiff:[],
-            len:0,
-            dim:0,
-            tags:[],
-            stackData:[],
-            title:"abc"
+      
         }
     },
     mounted() {
@@ -57,7 +49,7 @@ export default {
                                 .append("g")
                                 .attr("transform","translate(" + margin.left + "," + margin.top + ")")
                                
-
+            
             let x =  d3.scaleLinear().range([0, width]).domain([0, len]);
             let y =  d3.scaleLinear().range([height,0]).domain([-0.35, 0.35]);
           
@@ -146,7 +138,7 @@ export default {
                 .keys(keys)
                 (data)
                 
-           
+            
             svg
                 .selectAll("layer")
                 .data(stackedData)
@@ -173,8 +165,8 @@ export default {
                     .duration(250)
                     .attr("opacity", "1");
                 })     
-            
-        
+                
+                
           
         },
         getScales() {
@@ -194,11 +186,14 @@ export default {
             this.line = path(this.data);
             
         },
+        removeAll(){
+            d3.select("#graph").select("svg").remove()
+        }
     },
 };
 </script>
 
-</script>
+
 <style>
 .svg-container {
     display: inline-block;
