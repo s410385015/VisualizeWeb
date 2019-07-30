@@ -1,35 +1,52 @@
 <template>
     <div>
-        <div id="graph">
+        <div id="stackbargraph">
         </div>
         
     </div>
 </template>
 
 <script>
+window.d3=d3v4;
+
 export default {
     name: 'StackedBar',
     data: function() {
         return {
-           
+          keys:[],
+          data:[],
+          len:0,
+          title:'' 
         }
     }, 
     mounted() {
+        let self=this;
+        window.addEventListener('resize',function () {//执行
+            self.removeAll();
+            self.draw(self.keys,self.data,self.len,self.title);
+            
+        })
+    
     },
     methods: {
-      init(keys,data,len,title){
+        init(keys,data,len,title){
+            this.keys=keys;
+            this.data=data;
+            this.len=len;
+            this.title=title;
             this.draw(keys,data,len,title)
-    
+
         },
         draw(keys,data,len,title){
+            var offset=0.06;
 
-          
-            var margin = {top: 60, right: 30, bottom: 30, left: 80},
-                width = this.$el.clientWidth*0.95 - margin.left - margin.right,
+            window.d3=d3v4;
+            var margin = {top: 60, right: 30, bottom: 30, left: document.getElementById('stackbargraph').offsetWidth*offset},
+                width = document.getElementById('stackbargraph').offsetWidth - margin.left,
                 height =  300- margin.top - margin.bottom;
-
+        // let width = document.getElementById('horizongraph').offsetWidth;
        
-            var svg=d3.select("#graph")
+            var svg=d3.select("#stackbargraph")
                                 .append("svg")
                                 .attr("width", width+margin.left+margin.right)
                                 .attr("height", height + margin.top + margin.bottom)
@@ -68,7 +85,7 @@ export default {
                 .keys(keys)
                 (data)
         
-            console.log(stackedData)
+            
             let groups=svg
                 .selectAll("layer")
                 .data(stackedData)
@@ -96,7 +113,7 @@ export default {
           
         },
         removeAll(){
-            d3.select("#graph").select("svg").remove()
+            d3.select("#stackbargraph").select("svg").remove();
         }
     }
 };

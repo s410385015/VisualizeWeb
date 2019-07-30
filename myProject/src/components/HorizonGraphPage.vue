@@ -1,15 +1,15 @@
 <template>
   <div id="graph">
-    <Heatmap/>
+    <!--<Heatmap/>-->
     
     
     <div class="timeGraph">
         <select @change="Onchange($event)" v-model="selected">
             <option v-for="t in types" v-bind:value="t.id">{{t.name}}</option>
         </select>
-        <apexchart width="90%" height="250" type="line"  :options="chartOptions" :series="series"></apexchart>  
+        <apexchart width="98%" left="8%" height="250" type="line"  :options="chartOptions" :series="series"></apexchart>  
       
-        
+        <!--
         <input type="checkbox" id="r2_c" value=2 v-model="checkValue" v-on:change="Update()">
         <label for="r2_c">Dim2</label>
         <input type="checkbox" id="r4_c" value=4 v-model="checkValue" v-on:change="Update()">
@@ -17,13 +17,13 @@
         <input type="checkbox" id="r6_c" value=6 v-model="checkValue" v-on:change="Update()">
         <label for="r6_c">Dim6</label>
         <input type="checkbox" id="r8_c" value=8 v-model="checkValue" v-on:change="Update()">
-        <label for="r8_c">Dim8</label>
+        <label for="r8_c">Dim8</label>-->
     </div>
     
-     <div ref="container" ></div> 
-
+    <div ref="container1" ></div> 
+    <div ref="container" ></div> 
     <!--<button v-on:click="ModeSwitch">{{BtnMsg}}</button>-->
-    
+    <!--
     <div v-if="mode">
         <VueSlideBar
           v-model="value2"
@@ -36,7 +36,7 @@
         <h2>Value: {{value2}}</h2>
            
     </div>
-
+    -->
     <!--<div ref="containerg"></div>-->
     
     <!--<div ref="containerg"></div>-->
@@ -56,7 +56,7 @@ import VueSlideBar from 'vue-slide-bar'
 import HorizonGraph from './HorizonGraph'
 
 export default {
-  name: 'TimeSeries',
+  name: 'HorizonGraphPage',
   components: {
       Heatmap,
       StreamGraph,
@@ -108,6 +108,7 @@ export default {
       stackData:[],
       keys:[],
       instances:[],
+      date:[]
     }
   },
   mounted () {
@@ -116,24 +117,30 @@ export default {
         var tmp=Vue.extend(HorizonGraph)
         var instance=new tmp();
         instance.$mount();
-       
+        self.$refs.container1.appendChild(instance.$el);
+        
+        //instance.init(self.dataDiff,self.len,self.dim,self.tags);
+        self.instances.push(instance);
 
         let _self=this;
-        this.$axios.get('http://140.113.210.24:5000/reconstructRaw').then((response) => {
+        this.$axios.get('http://140.113.210.24:5000/linegraph').then((response) => {
             _self.r=_self.RoundFloat(0,response.data['r']);
             _self.d2=_self.RoundFloat(0,response.data['d2']);
             _self.d4=_self.RoundFloat(2,response.data['d4']);
             _self.d6=_self.RoundFloat(2,response.data['d6']);
             _self.d8=_self.RoundFloat(2,response.data['d8']);
+            _self.date=response.data['date'].map(function(d){
+                return d.substr(0,10);
+            })
+            
+     
             let x=0;
             let len=_self.r.length;
-            let xaxis=[];
-            while(x<len)
-            {
-                xaxis.push(x);
-                x++;
+            this.chartOptions={
+                xaxis: {
+                        categories:_self.date
+                }
             }
-            _self.chartOptions.categories=xaxis;
         });
         this.$axios.get('http://140.113.210.24:5000/getraw20').then((response) => {
             let _r = Object.keys((JSON.parse("["+response.data+"]"))[0]);
@@ -152,7 +159,7 @@ export default {
 
     
         
-    
+        
         this.$axios.get('http://140.113.210.24:5000/reconstructDiffDiv').then((response) => {
             _self.dataDiff.push(response.data['r2']);
             _self.dataDiff.push(response.data['r4']);
@@ -181,7 +188,7 @@ export default {
             }
 
 
-            console.log(_self.stackData)
+           
             _self.keys=Object.keys(_self.stackData[0][0]);
             
             //this.mode=true;
@@ -199,16 +206,8 @@ export default {
             }
             
             
-            for(i=0;i<_self.dim;i++){
-                var tmp=Vue.extend(StreamGraph)
-                var instance=new tmp()
-                instance.$mount()
-                _self.$refs.container.appendChild(instance.$el)
-               
-                instance.init(_self.keys,_self.stackData[i],_self.len,_self.tags[i])
-            }
-            
-             self.$refs.container.appendChild(instance.$el);
+        
+
         });
         
         
@@ -264,18 +263,6 @@ export default {
             {
                 name: 'r2',
                 data: _d2
-            },
-            {
-                name: 'r4',
-                data: _d4
-            },
-            {
-                name: 'r6',
-                data: _d6
-            },
-            {
-                name: 'r8',
-                data: _d8
             }
             
         ]
@@ -312,5 +299,9 @@ export default {
 }
 .timeGraph {
    padding-left: 0%;
+}
+
+.apexcharts-canvas {
+    padding-left: 3%;
 }
 </style>

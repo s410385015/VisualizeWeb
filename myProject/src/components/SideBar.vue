@@ -62,6 +62,11 @@ export default {
                                 href: '/timeserie',
                                 title: 'Time Series',
                                 icon: 'fa fa-file-alt'
+                            },
+                            {
+                                href: '/horizongraph',
+                                title: 'Horizon Graph',
+                                icon: 'fa fa-file-alt'
                             }
                         ]
                     }
@@ -74,8 +79,10 @@ export default {
     
     methods: {
         onCollapse (collapsed) {
-        console.log(collapsed)
-        this.collapsed = collapsed}
+            console.log(collapsed);
+            this.collapsed = collapsed;
+        }
+
     }
   
 }

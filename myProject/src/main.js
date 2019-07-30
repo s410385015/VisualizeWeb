@@ -11,6 +11,7 @@ import VueApexCharts from 'vue-apexcharts'
 import HighchartsVue from 'highcharts-vue'
 import VueSlideBar from 'vue-slide-bar'
 
+
 Vue.component('VueSlideBar', VueSlideBar)
 Vue.use(HighchartsVue)
 //Vue.use(BootstrapVue)

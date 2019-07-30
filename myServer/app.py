@@ -43,6 +43,47 @@ def GetReconstructRaw():
     List={'r':raw.tolist(),'d2':dim2.tolist(),'d4':dim4.tolist(),'d6':dim6.tolist(),'d8':dim8.tolist()}
     return jsonify(List)
 
+
+@app.route('/linegraph', methods=['GET'])
+def GetLineGraphInfo():
+    raw=np.load('raw.npy')
+    dim2=np.load('dim2_reconnstruct.npy')
+    dim4=np.load('dim4_reconnstruct.npy')
+    dim6=np.load('dim6_reconnstruct.npy')
+    dim8=np.load('dim8_reconnstruct.npy')
+    date=np.load('date.npy')
+    List={'r':raw.tolist(),'d2':dim2.tolist(),'d4':dim4.tolist(),'d6':dim6.tolist(),'d8':dim8.tolist(),'date':date.tolist()}
+    return jsonify(List)
+
+
+@app.route('/horizongraph', methods=['GET'])
+def GetHorizonGraphInfo():
+    raw=np.load('raw.npy')
+    dim2=np.load('dim2_reconnstruct.npy')
+    dim4=np.load('dim4_reconnstruct.npy')
+    dim6=np.load('dim6_reconnstruct.npy')
+    dim8=np.load('dim8_reconnstruct.npy')
+    tags=np.load('tags.npy')
+    date=np.load('date.npy')
+    len=(int)(raw.shape[0]/1)
+    
+    
+    r2=dim2/raw-1
+    r2=np.round(np.array(r2),decimals=4)
+
+    r4=dim4/raw-1
+    r4=np.round(np.array(r4),decimals=4)
+    
+    r6=dim6/raw-1
+    r6=np.round(np.array(r6),decimals=4)
+    
+    r8=dim8/raw-1
+    r8=np.round(np.array(r8),decimals=4)
+
+    List={'len':raw.shape[0],'dim':raw.shape[1],'r2':r2.tolist(),'r4':r4.tolist(),'r6':r6.tolist(),'r8':r8.tolist(),'tags':tags.tolist(),'date':date.tolist()}
+    return jsonify(List)
+
+
 @app.route('/reconstructDiff', methods=['GET'])
 def GetReconstructDiff():
     raw=np.load('raw.npy')

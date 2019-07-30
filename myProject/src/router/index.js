@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Graph from '@/components/Graph'
 import Data from '@/components/Data'
 import TimeSerie from '@/components/TimeSerie'
+import HorizonGraphPage from '@/components/HorizonGraphPage'
 Vue.use(Router)
 
 export default new Router({
@@ -21,6 +22,11 @@ export default new Router({
       path: '/timeserie',
       name: 'TimeSerie',
       component: TimeSerie
+    },
+    {
+      path: '/horizongraph',
+      name: 'HorizonGraphPage',
+      component: HorizonGraphPage
     }
   ]
 })
