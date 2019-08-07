@@ -3,7 +3,7 @@
     <div class='demo'>
         <div class="container">
             <h1>
-                Demo
+                Digital Economy AI
                 <a
                     style="color: #000;text-transform: uppercase;font-size: 14px;font-weight: 400;"
                     href="https://github.com/s410385015"
@@ -12,6 +12,7 @@
                 </a>
             </h1>
             <hr style="margin: 50px 0px;border: 1px solid #e3e3e3;">
+            <div id="top"></div>
             <keep-alive>
                 <router-view />
             </keep-alive>
@@ -53,6 +54,7 @@ export default {
                         title: 'Graph',
                         icon: 'fa fa-chart-area',
                         child: [
+                            /*
                             {
                                 href: '/graph',
                                 title: 'null',
@@ -63,9 +65,15 @@ export default {
                                 title: 'Time Series',
                                 icon: 'fa fa-file-alt'
                             },
+                            */
                             {
                                 href: '/horizongraph',
-                                title: 'Horizon Graph',
+                                title: 'Reconstruction',
+                                icon: 'fa fa-file-alt'
+                            },
+                             {
+                                href: '/dimgraph',
+                                title: 'Prediction',
                                 icon: 'fa fa-file-alt'
                             }
                         ]

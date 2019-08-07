@@ -22,24 +22,29 @@ export default {
             colors:[],
             mainData:0,
             co:[],
-            date:[]
+            date:[],
+            raw:[],
+            visible:true,
+            paddingLeft:"4.5%"
         }
     },
     mounted(){
 
-      
+        
         let self=this;
+        
         
         this.$axios.get('http://140.113.210.24:5000/horizongraph').then((response) => {
             self.dataDiff.push(response.data['r2']);
             self.dataDiff.push(response.data['r4']);
             self.dataDiff.push(response.data['r6']);
             self.dataDiff.push(response.data['r8']);
+            self.raw=response.data['raw'];
             self.len=response.data['len'];
             self.dim=response.data['dim'];
             self.tags=response.data['tags'];
             self.date=response.data['date'];
-
+      
             self.mainData=self.dataDiff[0];
             let i;
             for(i=0;i<self.dim;i++){
@@ -47,16 +52,18 @@ export default {
               self.co.push('');
             }
             //self.dataDiff=self.dataDiff[0];
+            
+       
             self.draw(self.date,self.mainData,self.tags);
+            
+            
         });
         
 
         window.addEventListener('resize',function () {
-            console.log('?');
             self.removeAll();
             self.draw(self.date,self.mainData,self.tags);
         })
-    
     
         
     },
@@ -78,7 +85,7 @@ export default {
             this.draw(this.date,this.mainData,this.tags);
         },
         draw(date,data,tags){
-
+            this.removeAll();
 
             let offset=0.06;
             window.d3=d3v3;
@@ -102,6 +109,12 @@ export default {
                                 .step(60 * 60 * 24 * 1000 *(data.length/(width*0.94)))
                                 .size(width*0.94)
                                 .stop();
+           
+            d3.select("#horizongraph").append("div")
+                  .attr("class", "rule")
+                  .call(context.rule());
+            
+            d3.select("#horizongraph").selectAll(".rule").style("padding-left",this.paddingLeft);
             
             d3.select("#horizongraph").selectAll(".axis")
                 .data(["bottom"])
@@ -109,6 +122,7 @@ export default {
                 .attr("class", function(d) { return d + " axis"; })
                 .each(function(d) { d3.select(this).call(context.axis(width*offset).ticks(12).orient(d)); });
 
+         
             
           
           
@@ -171,7 +185,7 @@ export default {
                 return metric(tags[i], data[i]);
             });
         
-
+          
 
             d3.select("#horizongraph").selectAll(".horizon").data(metrics)
                 .enter().insert("div", ".bottom")
@@ -179,10 +193,11 @@ export default {
                 .call(context.horizon(width*offset)
                 .mode("mirror")
                 .colors(["#E06C4C", "#EBA18F", "#F5D2CA", "#C0E2F0", "#7AC4E0", "#1DA4D1"].reverse())
+                //.colors(["#0000D4","#A8A8FF","#4C4CFF","#FFB0B0","#FF5050","#FF0404"])
                 .format(d3.format(".2f")));   
 
           
-
+            //d3.select("#horizongraph").selectAll(".rule").style("padding-left","6%");
             d3.select("#horizongraph").selectAll(".horizon").select('.title').style("color", function(d, i) {
                   return self.colors[i];
             });
@@ -190,7 +205,7 @@ export default {
             d3.select("#horizongraph").selectAll(".horizon").on('click',function(ctx,idx)
             {
 
-                let IndexInfo=self.calculateIdx(self.mainData,idx);
+                let IndexInfo=self.calculateIdx(self.raw,idx);
                 let newIndex=IndexInfo.map(function(a){ return a.index});
                 self.colors=IndexInfo.map(function(a){ return a.color});
 
@@ -284,7 +299,37 @@ export default {
           
 
             return co;
+        },
+        updateData(data)
+        {
+
+            this.mainData=data;
+            this.removeAll();
+            this.draw(this.date,this.mainData,this.tags);
+        },
+        setVisible(flag)
+        {
+        
+          this.visible=flag;
+           
+        },
+        getstyle(sname) {
+          for (var i=0;i<document.styleSheets.length;i++) {
+            var rules;
+            if (document.styleSheets[i].cssRules) {
+              rules = document.styleSheets[i].cssRules;
+            } else {
+              rules = document.styleSheets[i].rules;
+            }
+            for (var j=0;j<rules.length;j++) {
+              if (rules[j].selectorText == sname) {
+                return rules[j].style;
+              }
+            }
+          }
         }
+
+
 
    }
 }
@@ -424,4 +469,9 @@ header {
   z-index: 2;
 }
 
+.rule{
+  height:100%;
+  position: absolute;
+  padding-left: 3%; 
+}
 </style>

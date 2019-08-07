@@ -1,8 +1,11 @@
 from flask import Flask, jsonify
+from flask import send_file
 from flask_cors import CORS
+from flask import request
 import csv
 import json
 import numpy as np
+from AE import *
 # configuration
 DEBUG = True
 
@@ -12,6 +15,7 @@ app.config.from_object(__name__)
 app.config['JSON_AS_ASCII'] = False
 # enable CORS
 CORS(app)
+SelecDim=-1
 
 
 def Normalize(_data):
@@ -25,6 +29,47 @@ def _Normalize(_data,dataMin,dataMax):
     new_data=(_data-dataMin)/(dataMax-dataMin)
     return new_data
 
+
+
+
+@app.route('/dimselect', methods=['GET'])
+def GetDimGraph():
+    dim=int(request.args.get('dim'))
+    factor=int(request.args.get('factor'))
+    #DrawDim(dim)
+    if dim==-1:
+        image_file_path='.//dimimage//dimall.png'
+    else:   
+        image_file_path='.//dimimage//'+str(factor).zfill(2)+'dimall'+str(dim)+'.png'
+    return send_file(image_file_path, add_etags=False, cache_timeout=0, attachment_filename='dimall.png')
+
+
+@app.route('/dimselectDetail', methods=['GET'])
+def GetDimGraphDetail():
+    dim=int(request.args.get('dim'))
+    factor=int(request.args.get('factor'))
+    
+    if dim==-1:
+        image_file_path='.//dimimage//dimall.png'
+    else:   
+        image_file_path='.//dimimage//'+str(factor).zfill(2)+'dim'+str(dim)+'.png'
+    return send_file(image_file_path, add_etags=False, cache_timeout=0, attachment_filename='dimdetail.png.png')
+
+@app.route('/dimselectDetailData', methods=['GET'])
+def GetDimGraphDetailData():
+    dim=int(request.args.get('dim'))
+    factor=int(request.args.get('factor'))
+
+    file_path='.//dimdata//'+str(factor).zfill(2)+'dim'+str(dim)+'.npy'
+    tmp=np.load(file_path)
+    List={'data':tmp.tolist()}
+    return jsonify(List)
+
+
+@app.route('/image', methods=['GET'])
+def GetImage():
+    image_file_path='a.png'
+    return send_file(image_file_path, add_etags=False, cache_timeout=0, attachment_filename='a.png')
 
 
 @app.route('/getraw20', methods=['GET'])
@@ -80,7 +125,7 @@ def GetHorizonGraphInfo():
     r8=dim8/raw-1
     r8=np.round(np.array(r8),decimals=4)
 
-    List={'len':raw.shape[0],'dim':raw.shape[1],'r2':r2.tolist(),'r4':r4.tolist(),'r6':r6.tolist(),'r8':r8.tolist(),'tags':tags.tolist(),'date':date.tolist()}
+    List={'raw':raw.tolist(),'len':raw.shape[0],'dim':raw.shape[1],'r2':r2.tolist(),'r4':r4.tolist(),'r6':r6.tolist(),'r8':r8.tolist(),'tags':tags.tolist(),'date':date.tolist()}
     return jsonify(List)
 
 
@@ -159,6 +204,11 @@ def GetReconstructDiffDiv():
     return jsonify(List)
 
 
+@app.route('/tags', methods=['GET'])
+def GetTags():
+    tags=np.load('tags.npy')
+    List={'tags':tags.tolist()}
+    return jsonify(List)
 
 @app.route('/reconstructDiffSub', methods=['GET'])
 def GetReconstructDiffSub():

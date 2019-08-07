@@ -4,6 +4,7 @@ import Graph from '@/components/Graph'
 import Data from '@/components/Data'
 import TimeSerie from '@/components/TimeSerie'
 import HorizonGraphPage from '@/components/HorizonGraphPage'
+import DimGraph from '@/components/DimGraph'
 Vue.use(Router)
 
 export default new Router({
@@ -13,11 +14,13 @@ export default new Router({
       name: 'Graph',
       component: Graph
     },
+    
     {
       path: '/data',
       name: 'Data',
       component: Data
     },
+    
     {
       path: '/timeserie',
       name: 'TimeSerie',
@@ -27,6 +30,11 @@ export default new Router({
       path: '/horizongraph',
       name: 'HorizonGraphPage',
       component: HorizonGraphPage
-    }
+    },
+    {
+      path: '/dimgraph',
+      name: 'DimGraph',
+      component: DimGraph
+    },
   ]
 })

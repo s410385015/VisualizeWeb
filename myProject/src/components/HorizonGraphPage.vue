@@ -7,7 +7,7 @@
         <select @change="Onchange($event)" v-model="selected">
             <option v-for="t in types" v-bind:value="t.id">{{t.name}}</option>
         </select>
-        <apexchart width="98%" left="8%" height="250" type="line"  :options="chartOptions" :series="series"></apexchart>  
+        <apexchart width="98%" left="6.5%" height="250" type="line"  :options="chartOptions" :series="series"></apexchart>  
       
         <!--
         <input type="checkbox" id="r2_c" value=2 v-model="checkValue" v-on:change="Update()">
@@ -20,8 +20,8 @@
         <label for="r8_c">Dim8</label>-->
     </div>
     
-    <div ref="container1" ></div> 
-    <div ref="container" ></div> 
+    <div ref="containerGraph"></div> 
+    <!--<div ref="container" ></div>-->
     <!--<button v-on:click="ModeSwitch">{{BtnMsg}}</button>-->
     <!--
     <div v-if="mode">
@@ -117,10 +117,13 @@ export default {
         var tmp=Vue.extend(HorizonGraph)
         var instance=new tmp();
         instance.$mount();
-        self.$refs.container1.appendChild(instance.$el);
+        self.$refs.containerGraph.appendChild(instance.$el);
         
         //instance.init(self.dataDiff,self.len,self.dim,self.tags);
         self.instances.push(instance);
+        
+        
+
 
         let _self=this;
         this.$axios.get('http://140.113.210.24:5000/linegraph').then((response) => {
@@ -199,14 +202,14 @@ export default {
                 var tmp=Vue.extend(StackedBar)
                 var instance=new tmp()
                 instance.$mount()
-                _self.$refs.container.appendChild(instance.$el)
+                _self.$refs.containerGraph.appendChild(instance.$el)
                
                 instance.init(_self.keys,_self.stackData[i],_self.len,_self.tags[i])
                 _self.instances.push(instance)
             }
             
             
-        
+            
 
         });
         
@@ -261,7 +264,7 @@ export default {
                 
             },
             {
-                name: 'r2',
+                name: 'reconstruct',
                 data: _d2
             }
             
@@ -302,6 +305,6 @@ export default {
 }
 
 .apexcharts-canvas {
-    padding-left: 3%;
+    padding-left: 2.5%;
 }
 </style>

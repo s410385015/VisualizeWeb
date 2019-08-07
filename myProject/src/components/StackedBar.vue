@@ -1,9 +1,5 @@
 <template>
-    <div>
-        <div id="stackbargraph">
-        </div>
-        
-    </div>
+        <div id="stackbargraph" style="padding-top: 150px;"></div>
 </template>
 
 <script>
@@ -50,7 +46,6 @@ export default {
                                 .append("svg")
                                 .attr("width", width+margin.left+margin.right)
                                 .attr("height", height + margin.top + margin.bottom)
-                           
                                 .append("g")
                                 .attr("transform","translate(" + margin.left + "," + margin.top + ")")
                                

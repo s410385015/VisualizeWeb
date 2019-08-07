@@ -1,4 +1,4 @@
-    <template>
+<template>
   <div>
     <h2>Installation</h2>
     <p>Use npm to install plugin</p>

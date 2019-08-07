@@ -1299,11 +1299,15 @@
         context.on("change.rule-" + id, change);
         metric_.on("change.rule-" + id, change);
       });
-  
+
+      let lastleft=-1;
       context.on("focus.rule-" + id, function(i) {
+
         line.datum(i)
             .style("display", i == null ? "none" : null)
-            .style("left", i == null ? null : cubism_ruleLeft);
+            .style("left", i == null ? lastleft : cubism_ruleLeft);
+        if(i!=null)
+          lastleft=cubism_ruleLeft;  
       });
     }
   
@@ -1329,11 +1333,12 @@
   
   function cubism_ruleStyle(line) {
     line
-        .style("position", "absolute")
-        .style("top", 0)
+        .style("position", "relative")
+        .style("top", "0%")
         .style("bottom", 0)
         .style("width", "1px")
-        .style("pointer-events", "none");
+        .style("pointer-events", "none")
+        .style("height","100%");
   }
   
   function cubism_ruleLeft(i) {
